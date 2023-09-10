@@ -1,7 +1,5 @@
-from dotenv import load_dotenv
-
-load_dotenv()
-
+from classes import HeadHunterAPI, SuperJobAPI, Vacancy,JSONSaver
+from scripts import filter_vacancies, sort_vacancies, get_top_vacancies, print_vacancies
 
 
 # Создание экземпляра класса для работы с API сайтов с вакансиями
@@ -19,6 +17,7 @@ vacancy = Vacancy("Python Developer", "<https://hh.ru/vacancy/123456>", "100 000
 json_saver = JSONSaver() # Принимает путь до файла и если его нет, то создает новый
 json_saver.add_vacancy(vacancy)
 json_saver.get_vacancies_by_salary("100 000-150 000 руб.") # передавать словарь
+json_saver.save_to_file()
 json_saver.delete_vacancy(vacancy)
 
 # Функция для взаимодействия с пользователем
@@ -40,3 +39,7 @@ def user_interaction():
 
 if __name__ == "__main__":
     user_interaction()
+
+
+if __name__ == "__main__":
+    hh_api.get_vacancies("Python")
