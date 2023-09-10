@@ -8,15 +8,15 @@ load_dotenv()
 class API_Connect(ABC):
 
     @abstractmethod
-    def __init__(self, vacancies_url):
+    def __init__(self, vacancies_url: str):
         self.vacancies_url = vacancies_url
 
     @abstractmethod
-    def get_vacancies(self, keyword):
+    def get_vacancies(self, keyword: str):
         pass
 
 
-class JSONSaver(ABC):
+class Saver(ABC):
 
     @abstractmethod
     def add_vacancy(self):
@@ -30,7 +30,8 @@ class JSONSaver(ABC):
     def delete_vacancy(self):
         pass
 
-
+class JSONSaver(Saver):
+    pass
 class HeadHunterAPI(API_Connect):
     """
     Получает ключевое слово и делает запрос по API на площадку для поиска работы
@@ -39,7 +40,7 @@ class HeadHunterAPI(API_Connect):
     def __init__(self):
         self.vacancies_url = "https://api.hh.ru/vacancies/"
 
-    def get_vacancies(self, keyword):
+    def get_vacancies(self, keyword: str):
         params = {
             "text": keyword,
             "per_page": 20,
@@ -57,7 +58,7 @@ class HeadHunterAPI(API_Connect):
                 salary_to = get_vac["salary"]["to"]
             dict_vacancies[item_id] = {"name": get_vac["name"], "salary from": salary_from,
                                        "salary to": salary_to, "url": get_vac["alternate_url"],
-                                       "experience": get_vac["experience"]['name']}
+                                       "experience": get_vac["experience"]['name'], "tasks": get_vac["description"]}
         return dict_vacancies
 
 
@@ -66,7 +67,7 @@ class SuperJobAPI(API_Connect):
     def __init__(self):
         self.vacancies_url = "https://api.superjob.ru/2.0/vacancies/"
 
-    def get_vacancies(self, keyword):
+    def get_vacancies(self, keyword: str):
         params = {
             "keyword": keyword,
             "count": 20,
@@ -83,27 +84,58 @@ class SuperJobAPI(API_Connect):
             get_vac = requests.get(f"{self.vacancies_url}{item_id}", headers=headers).json()
             dict_vacancies[item_id] = {"name": get_vac["profession"], "salary from": get_vac["payment_from"],
                                        "salary to": get_vac["payment_to"], "url": get_vac["link"],
-                                       "experience": get_vac["experience"]["title"]}
+                                       "experience": get_vac["experience"]["title"],
+                                       "tasks": get_vac["vacancyRichText"]}
         return dict_vacancies
 
 
 class Vacancy:
 
-    def __init__(self, name, url, salary, description):
+    def __init__(self, name: str, url: str, salary_from: int, salary_to: int, experience: str):
         try:
+
             self.name = name
             self.url = url
-            self.salary = salary
-            self.description = description
+            self.salary_from = salary_from
+            self.salary_to = salary_to
+            self.experience = experience
         except IndexError:
             self.name = None
             self.url = None
+            self.salary_from = None
+            self.salary_to = None
             self.salary = None
             self.description = None
 
-    def salary_comparison(self):
-        pass
+    def __float__(self):
+        if self.salary_from is not None and self.salary_to is not None:
+            return (self.salary_from + self.salary_to) / 2
+        elif self.salary_from is not None and self.salary_to is None:
+            return self.salary_from
+        elif self.salary_from is None and self.salary_to is not None:
+            return self.salary_to
+        else:
+            return 0
+
+    def __ge__(self, other):
+        if isinstance(other, Vacancy):
+            return float(self) >= float(other)
+        elif isinstance(other, int):
+            return float(self) >= other
+        else:
+            raise ValueError("Несравниваемые объекты")
+
+    def __le__(self, other):
+        if isinstance(other, Vacancy):
+            return float(self) <= float(other)
+        elif isinstance(other, int):
+            return float(self) <= other
+        else:
+            raise ValueError("Несравниваемые объекты")
 
 
-hh_api = HeadHunterAPI()
-print(hh_api.get_vacancies("Python"))
+"""
+JSON saver
+фильтор вакансий
+сортировка вакансий по зарплате    
+"""

@@ -1,5 +1,4 @@
-from classes import HeadHunterAPI, SuperJobAPI, Vacancy,JSONSaver
-from scripts import filter_vacancies, sort_vacancies, get_top_vacancies, print_vacancies
+from classes import HeadHunterAPI, SuperJobAPI, Vacancy,JSONSaverad
 
 
 # Создание экземпляра класса для работы с API сайтов с вакансиями
@@ -10,9 +9,12 @@ superjob_api = SuperJobAPI()
 hh_vacancies = hh_api.get_vacancies("Python")
 superjob_vacancies = superjob_api.get_vacancies("Python")
 
-# Создание экземпляра класса для работы с вакансиями
-vacancy = Vacancy("Python Developer", "<https://hh.ru/vacancy/123456>", "100 000-150 000 руб.", "Требования: опыт работы от 3 лет...")
-
+# Создание экземпляров класса для работы с вакансиями
+list_of_vacancis = []
+for item_id, vacancy in {**superjob_vacancies, **hh_vacancies}.items():
+    list_of_vacancis.append(Vacancy(vacancy["name"], vacancy["url"], vacancy["salary from"], vacancy["salary to"], vacancy["experience"]))
+print(list_of_vacancis)
+print("jhgvbjkn")
 # Сохранение информации о вакансиях в файл
 json_saver = JSONSaver() # Принимает путь до файла и если его нет, то создает новый
 json_saver.add_vacancy(vacancy)
