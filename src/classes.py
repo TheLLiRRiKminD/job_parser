@@ -109,14 +109,16 @@ class Vacancy:
             self.experience = None
 
     def __float__(self):
+        self.salary_to = None if not self.salary_to else self.salary_to
+        self.salary_from = None if not self.salary_from else self.salary_from
         if self.salary_from is not None and self.salary_to is not None:
-            return (self.salary_from + self.salary_to) / 2
+            return float((self.salary_from + self.salary_to) / 2)
         elif self.salary_from is not None and self.salary_to is None:
-            return self.salary_from
+            return float(self.salary_from)
         elif self.salary_from is None and self.salary_to is not None:
-            return self.salary_to
+            return float(self.salary_to)
         else:
-            return 0
+            return 0.0
 
     def __ge__(self, other):
         if isinstance(other, Vacancy):
