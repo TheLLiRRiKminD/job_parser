@@ -7,7 +7,6 @@ from classes import HeadHunterAPI, SuperJobAPI, Vacancy
 # json_saver.save_to_file()
 # json_saver.delete_vacancy(vacancy)
 
-
 def get_by_filter(salary_from, salary_to, keywords):
     json_load = Load
     json_load = [item for item in json_load if item >= salary_from and item <= salary_to]
