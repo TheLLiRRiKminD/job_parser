@@ -91,21 +91,22 @@ class SuperJobAPI(API_Connect):
 
 class Vacancy:
 
-    def __init__(self, name: str, url: str, salary_from: int, salary_to: int, experience: str):
+    def __init__(self, id_vac: int, name: str, url: str, salary_from: int, salary_to: int, experience: str, tasks: str):
         try:
-
+            self.id_vac = id_vac
             self.name = name
             self.url = url
             self.salary_from = salary_from
             self.salary_to = salary_to
             self.experience = experience
+            self.tasks = tasks
         except IndexError:
             self.name = None
             self.url = None
             self.salary_from = None
             self.salary_to = None
             self.salary = None
-            self.description = None
+            self.experience = None
 
     def __float__(self):
         if self.salary_from is not None and self.salary_to is not None:
@@ -137,5 +138,9 @@ class Vacancy:
 """
 JSON saver
 фильтор вакансий
-сортировка вакансий по зарплате    
+сортировка вакансий по зарплате
+id вакансий в инит
+    
 """
+# hh = HeadHunterAPI()
+# print(hh.get_vacancies("Python"))
