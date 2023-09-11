@@ -1,20 +1,6 @@
-from classes import HeadHunterAPI, SuperJobAPI, Vacancy
+import json
 
-
-# Сохранение информации о вакансиях в файл
-# json_saver = JSONSaver() # Принимает путь до файла и если его нет, то создает новый
-# json_saver.add_vacancy(vacancy)
-# json_saver.save_to_file()
-# json_saver.delete_vacancy(vacancy)
-
-def get_by_filter(salary_from, salary_to, keywords):
-    json_load = Load
-    json_load = [item for item in json_load if item >= salary_from and item <= salary_to]
-    for word in keywords:
-        for item in json_load:
-            if word in item.tasks:
-                [].append()
-                [] = list(set([]))
+from classes import HeadHunterAPI, SuperJobAPI, Vacancy, JSONSaver
 
 
 def user_interaction():
@@ -29,7 +15,7 @@ def user_interaction():
     return platforms, search_query, top_n, filter_words
 
 
-def get_top_vacancies(platforms: int, search_query: str):
+def get_list_of_vacancies(platforms: int, search_query: str):
     """
     Получает вакансии от сервера при помощь создания экземпляров классов получения данных по API
     и создает экземпляры класса Vacancies по полученным данным
@@ -95,6 +81,25 @@ def print_vacancies(top_vac):
 
 if __name__ == "__main__":
     user_input = user_interaction()
-    list_of_vac = get_top_vacancies(user_input[0], user_input[1])
+    list_of_vac = get_list_of_vacancies(user_input[0], user_input[1])
+    json_file = JSONSaver(user_input[1])
+    json_file.save_to_file(list_of_vac)
+    # json_file.add_vacancy(vacancy)
     top_vac = sort_and_filter_top_vac(list_of_vac, user_input[2], user_input[3])
     print_vacancies(top_vac)
+
+
+# Сохранение информации о вакансиях в файл
+# json_saver = JSONSaver() # Принимает путь до файла и если его нет, то создает новый
+# json_saver.add_vacancy(vacancy)
+# json_saver.save_to_file()
+# json_saver.delete_vacancy(vacancy)
+
+def get_by_filter(json_file, salary_from, salary_to, keywords):
+    json_load = json.loads()
+    json_load = [item for item in json_load if item >= salary_from and item <= salary_to]
+    for word in keywords:
+        for item in json_load:
+            if word in item.tasks:
+                [].append()
+                [] = list(set([]))

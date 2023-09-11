@@ -1,4 +1,7 @@
+import json
 from abc import ABC, abstractmethod
+from pathlib import Path
+
 import requests, os
 from dotenv import load_dotenv
 
@@ -19,19 +22,22 @@ class API_Connect(ABC):
 class Saver(ABC):
 
     @abstractmethod
-    def add_vacancy(self):
-        pass
+    def __init__(self, name_of_file):
+        self.name_of_file = name_of_file
 
     @abstractmethod
-    def get_vacancies_by_salary(self):
+    def save_to_file(self):
         pass
 
-    @abstractmethod
-    def delete_vacancy(self):
-        pass
 
-class JSONSaver(Saver):
-    pass
+    # @abstractmethod
+    # def delete_vacancy(self):
+    #     pass
+
+
+
+
+
 class HeadHunterAPI(API_Connect):
     """
     Получает ключевое слово и делает запрос по API на площадку для поиска работы
@@ -105,8 +111,8 @@ class Vacancy:
             self.url = None
             self.salary_from = None
             self.salary_to = None
-            self.salary = None
             self.experience = None
+            self.tasks = None
 
     def __float__(self):
         self.salary_to = None if not self.salary_to else self.salary_to
@@ -136,13 +142,24 @@ class Vacancy:
         else:
             raise ValueError("Несравниваемые объекты")
 
+    def to_dict(self):
+        return {'name': self.name,"url": self.url,"salary": self.__float__(),
+                "experience": self.experience,"tasks": self.tasks}
 
-"""
-JSON saver
-фильтор вакансий
-сортировка вакансий по зарплате
-id вакансий в инит
-    
-"""
-# hh = HeadHunterAPI()
-# print(hh.get_vacancies("Python"))
+
+class JSONSaver(Saver):
+    """Создает файл с ключевым словом вакансии"""
+
+    def __init__(self, name_of_file):
+        self.name_of_file = name_of_file
+
+    def save_to_file(self, list_of_vacancies):
+        list_of_dicts = [vac.to_dict() for vac in list_of_vacancies]
+        try:
+            content = json.loads(f"{self.name_of_file}.json")
+        except json.decoder.JSONDecodeError:
+            content = []
+        content += list_of_dicts
+        with open(f"{self.name_of_file}.json", "a",) as outfile:
+            json.dump(list_of_dicts, outfile)
+            print("Запись в файл прошла успешно")
