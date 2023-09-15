@@ -1,6 +1,5 @@
 import json
 from abc import ABC, abstractmethod
-from pathlib import Path
 
 import requests, os
 from dotenv import load_dotenv
@@ -28,14 +27,6 @@ class Saver(ABC):
     @abstractmethod
     def save_to_file(self):
         pass
-
-
-    # @abstractmethod
-    # def delete_vacancy(self):
-    #     pass
-
-
-
 
 
 class HeadHunterAPI(API_Connect):
